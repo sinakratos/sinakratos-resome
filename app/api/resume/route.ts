@@ -1,6 +1,22 @@
 import { z } from 'zod';
-import { isAdmin } from '@/lib/admin-auth';
-import { readResume,database } from '@/lib/resume-store';
+import { isAdmin, sameOrigin } from '@/lib/admin-auth';
+import { readResume, saveResume, readPhoto } from '@/lib/resume-store';
 import { resumeSchema } from '@/lib/resume';
-export async function GET(){try{return Response.json(await readResume(),{headers:{'Cache-Control':'no-store'}})}catch(e){console.error(e);return Response.json({error:'Content is temporarily unavailable.'},{status:503})}}
-export async function PUT(request:Request){if(!await isAdmin())return Response.json({error:'Administrator access required.'},{status:403});if(request.headers.get('origin')!==new URL(request.url).origin)return Response.json({error:'Invalid origin'},{status:403});try{const body=z.object({resume:resumeSchema,revision:z.number().int().nonnegative()}).parse(await request.json());const resume=resumeSchema.parse(body.resume);if(!Number.isInteger(body.revision)||body.revision<0)return Response.json({error:'Invalid revision'},{status:400});const db=database();const result=body.revision===0?await db.prepare('INSERT OR IGNORE INTO resume_content (id,content,revision) VALUES (?,?,?)').bind(1,JSON.stringify(resume),1).run():await db.prepare('UPDATE resume_content SET content = ?, revision = revision + 1 WHERE id = ? AND revision = ?').bind(JSON.stringify(resume),1,body.revision).run();if(!result.meta.changes)return Response.json({error:'Content changed in another session. Reload before saving.'},{status:409});return Response.json({revision:body.revision+1})}catch(e){console.error(e);return Response.json({error:'Unable to save. Check your entries and try again.'},{status:400})}}
+export const runtime = 'nodejs';
+export async function GET() {
+  try { return Response.json(await readResume(), { headers: { 'Cache-Control': 'no-store' } }); }
+  catch (e) { console.error(e); return Response.json({ error: 'Content is temporarily unavailable.' }, { status: 503 }); }
+}
+export async function PUT(request: Request) {
+  if (!await isAdmin()) return Response.json({ error: 'Administrator access required.' }, { status: 403 });
+  if (!sameOrigin(request)) return Response.json({ error: 'Invalid origin' }, { status: 403 });
+  try {
+    const body = z.object({ resume: resumeSchema, revision: z.number().int().nonnegative() }).parse(await request.json());
+    if (body.resume.photoUrl && !readPhoto(body.resume.photoUrl.split('/').pop()!)) return Response.json({ error: 'The photo is unavailable. Please upload it again.' }, { status: 400 });
+    if (!saveResume(body.resume, body.revision)) return Response.json({ error: 'Content changed in another session. Reload before saving.' }, { status: 409 });
+    return Response.json({ revision: body.revision + 1 });
+  } catch (e) {
+    console.error(e);
+    return Response.json({ error: 'Unable to save. Check your entries and try again.' }, { status: 400 });
+  }
+}

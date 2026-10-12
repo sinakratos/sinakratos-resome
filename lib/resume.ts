@@ -1,6 +1,277 @@
 import { z } from 'zod';
-const pair=z.object({en:z.string().max(5000),fa:z.string().max(5000)});
-export const resumeSchema=z.object({name:pair,title:pair,headline:pair,about:pair,location:pair,email:z.string().email(),phone:z.string().max(30),skills:z.array(z.object({name:z.string().max(80),level:z.enum(['Advanced','Intermediate'])})).max(30),experience:z.array(z.object({company:pair,role:pair,date:pair,description:pair})).max(20),projects:z.array(z.object({name:pair,description:pair,stack:z.string().max(300),url:z.string().refine(v=>!v||/^https:\/\//.test(v),'Use an https URL')})).max(30),education:pair,award:pair});
-export type Resume=z.infer<typeof resumeSchema>;
-const p=(en:string,fa:string)=>({en,fa});
-export const initialResume:Resume={name:p('Sina Khoshzaban','سینا خوشزبان خسروشاهی'),title:p('Backend Developer','توسعه‌دهنده بک‌اند'),headline:p('Behind every great product, a reliable backend.','پشت هر محصول خوب، یک بک‌اند قابل‌اعتماد است.'),about:p('Backend developer with 4+ years of experience building and maintaining Node.js and NestJS services. I develop B2B platforms, e-commerce systems, and APIs with MongoDB, PostgreSQL, and Redis. My focus is scalable architecture, performance, and maintainable software with Clean Architecture and SOLID principles.','توسعه‌دهنده بک‌اند با بیش از ۴ سال تجربه در طراحی و نگهداری سرویس‌های Node.js و NestJS. تجربه توسعه سامانه‌های B2B، فروشگاهی و API با MongoDB، PostgreSQL و Redis دارم. تمرکز من بر معماری مقیاس‌پذیر، بهینه‌سازی عملکرد و کد قابل نگهداری با اصول Clean Architecture و SOLID است.'),location:p('Tehran, Iran','تهران، ایران'),email:'sinakhoshzaban2@gmail.com',phone:'+989199296850',skills:['Node.js','NestJS','TypeScript','JavaScript','Express.js','REST API','MongoDB','Git'].map(name=>({name,level:'Advanced' as 'Advanced'|'Intermediate'})).concat(['PostgreSQL','Redis','Docker','Linux','Unit Testing','Python'].map(name=>({name,level:'Intermediate' as const}))),experience:[{company:p('Delaram Jewelry Gallery','گالری طلا و جواهر دلارام'),role:p('Backend Developer','توسعه‌دهنده بک‌اند'),date:p('Dec 2025 — Present','آذر ۱۴۰۴ — اکنون'),description:p('Develop and maintain NestJS and Express services, design APIs, and build user management and business workflows with frontend and product teams.','توسعه و نگهداری سرویس‌های NestJS و Express، طراحی API و پیاده‌سازی مدیریت کاربران و فرآیندهای کسب‌وکار با همکاری تیم‌های فرانت‌اند و محصول.')},{company:p('Lahze Card','لحظه کارت'),role:p('Backend Developer · Part time','توسعه‌دهنده بک‌اند · پاره‌وقت'),date:p('Dec 2024 — Present','آذر ۱۴۰۳ — اکنون'),description:p('Build enterprise REST APIs and server infrastructure. Optimize services with MongoDB and Redis and develop new product capabilities.','توسعه زیرساخت سمت سرور و REST APIهای سازمانی، بهینه‌سازی سرویس‌ها با MongoDB و Redis و توسعه قابلیت‌های جدید محصول.')},{company:p('MRL Robotics','آزمایشگاه رباتیک MRL'),role:p('Robotics Software Developer','توسعه‌دهنده نرم‌افزار رباتیک'),date:p('Apr 2022 — Jun 2025','اردیبهشت ۱۴۰۱ — خرداد ۱۴۰۴'),description:p('Develop software for humanoid soccer robots and research decision-making and control algorithms for robotics competitions.','توسعه نرم‌افزار ربات‌های انسان‌نمای فوتبالیست و تحقیق روی الگوریتم‌های تصمیم‌گیری و کنترل در پروژه‌ها و مسابقات رباتیک.')},{company:p('Freelance','فریلنس'),role:p('Backend Developer','توسعه‌دهنده بک‌اند'),date:p('Jul 2022 — Jan 2024','تیر ۱۴۰۱ — دی ۱۴۰۲'),description:p('Build Node.js and NestJS projects, design databases and APIs, implement authentication, and deploy and maintain services.','توسعه پروژه‌های Node.js و NestJS، طراحی پایگاه داده و API، پیاده‌سازی احراز هویت و استقرار و نگهداری سرویس‌ها.')}],projects:[{name:p('Rhino Coffee','راینو کافی'),description:p('Backend for a coffee business.','بک‌اند کسب‌وکار قهوه.'),stack:'NestJS / PostgreSQL / Docker',url:'https://rhinocaffe.ir'},{name:p('Vamdan','وامدان'),description:p('A commercial project featured in my résumé.','پروژه تجاری معرفی‌شده در رزومه.'),stack:'Backend development',url:'https://vamdan.com/'},{name:p('Task Management API','API مدیریت وظایف'),description:p('Task management with authenticated access.','مدیریت وظایف با احراز هویت کاربران.'),stack:'NestJS / MySQL / JWT',url:''},{name:p('Chatter Backend','بک‌اند چت'),description:p('Real-time messaging backend.','بک‌اند پیام‌رسانی بلادرنگ.'),stack:'NestJS / WebSocket / MongoDB / GraphQL',url:''},{name:p('E-commerce Backend','بک‌اند فروشگاه'),description:p('An e-commerce backend built with TypeScript.','بک‌اند فروشگاهی با TypeScript.'),stack:'NestJS / TypeScript / PostgreSQL / Docker',url:''},{name:p('Telegram Bot','ربات تلگرام'),description:p('Bot development with the Telegram API.','توسعه ربات با API تلگرام.'),stack:'Node.js / Telegram Bot API',url:''}],education:p('BSc in Computer Software Engineering · Islamic Azad University, Qazvin · 2020–2025','کارشناسی مهندسی کامپیوتر، نرم‌افزار · دانشگاه آزاد اسلامی قزوین · ۱۳۹۹–۱۴۰۴'),award:p('Iran Open 2023 · MRL-HSL humanoid robotics','ایران اپن ۲۰۲۳ · رباتیک انسان‌نمای MRL-HSL')};
+const pair = z.object({ en: z.string().max(5000), fa: z.string().max(5000) });
+const namedPair = pair.refine(value => !!value.en.trim() && !!value.fa.trim(), 'Please enter a name in both languages. / لطفاً نام را به هر دو زبان وارد کنید.');
+export const appearanceSchema = z.object({ theme: z.enum(['amber', 'ocean', 'emerald']), mode: z.enum(['light', 'dark']) });
+export const resumeSchema = z.object({
+  name: namedPair, title: pair, headline: pair, about: pair, location: pair,
+  email: z.string().email(), phone: z.string().max(30),
+  skills: z.array(z.object({ name: z.string().trim().min(1).max(80), level: z.enum(['Beginner', 'Intermediate', 'Advanced', 'Expert']) })).max(30),
+  experience: z.array(z.object({ company: namedPair, role: pair, date: pair, description: pair })).max(20),
+  projects: z.array(z.object({ name: namedPair, description: pair, stack: z.string().max(300), url: z.string().max(500).refine(value => {
+    if (!value) return true;
+    try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password; } catch { return false; }
+  }, 'Enter a valid HTTPS link. / لطفاً پیوند معتبر HTTPS وارد کنید.') })).max(30),
+  photoUrl: z.string().regex(/^$|^\/api\/photos\/[a-f0-9]{64}$/, 'Choose a profile photo using the upload control.').default(''),
+  education: pair, award: pair,
+  educationEntries: z.array(pair).max(20).default([]),
+  awards: z.array(pair).max(20).default([]),
+  appearance: appearanceSchema.default({ theme: 'amber', mode: 'dark' }),
+});
+export type Resume = z.infer<typeof resumeSchema>;
+export const initialResume: Resume = {
+  "name": {
+    "en": "Sina Khoshzaban",
+    "fa": "سینا خوشزبان خسروشاهی"
+  },
+  "title": {
+    "en": "Backend Developer",
+    "fa": "توسعه‌دهنده نرم‌افزار سمت سرور"
+  },
+  "headline": {
+    "en": "Behind every great product, a reliable backend.",
+    "fa": "طراحی و توسعه زیرساخت‌های نرم‌افزاری قابل‌اعتماد"
+  },
+  "about": {
+    "en": "Backend developer with 4+ years of experience building and maintaining Node.js and NestJS services. I develop B2B platforms, e-commerce systems, and APIs with MongoDB, PostgreSQL, and Redis. My focus is scalable architecture, performance, and maintainable software with Clean Architecture and SOLID principles.",
+    "fa": "توسعه‌دهنده نرم‌افزار سمت سرور با بیش از چهار سال تجربه در طراحی، پیاده‌سازی و نگهداری سرویس‌های مبتنی بر Node.js و NestJS. سوابق حرفه‌ای من شامل توسعه سامانه‌های سازمانی B2B، فروشگاه‌های اینترنتی و رابط‌های برنامه‌نویسی با استفاده از MongoDB، PostgreSQL و Redis است. در توسعه نرم‌افزار، بر معماری مقیاس‌پذیر، بهینه‌سازی عملکرد و قابلیت نگهداری، با رعایت اصول معماری پاک و SOLID تمرکز دارم."
+  },
+  "location": {
+    "en": "Tehran, Iran",
+    "fa": "تهران، ایران"
+  },
+  "email": "sinakhoshzaban2@gmail.com",
+  "phone": "+989199296850",
+  "skills": [
+    {
+      "name": "Node.js",
+      "level": "Advanced"
+    },
+    {
+      "name": "NestJS",
+      "level": "Advanced"
+    },
+    {
+      "name": "TypeScript",
+      "level": "Advanced"
+    },
+    {
+      "name": "JavaScript",
+      "level": "Advanced"
+    },
+    {
+      "name": "Express.js",
+      "level": "Advanced"
+    },
+    {
+      "name": "REST API",
+      "level": "Advanced"
+    },
+    {
+      "name": "MongoDB",
+      "level": "Advanced"
+    },
+    {
+      "name": "Git",
+      "level": "Advanced"
+    },
+    {
+      "name": "PostgreSQL",
+      "level": "Intermediate"
+    },
+    {
+      "name": "Redis",
+      "level": "Intermediate"
+    },
+    {
+      "name": "Docker",
+      "level": "Intermediate"
+    },
+    {
+      "name": "Linux",
+      "level": "Intermediate"
+    },
+    {
+      "name": "Unit Testing",
+      "level": "Intermediate"
+    },
+    {
+      "name": "Python",
+      "level": "Intermediate"
+    }
+  ],
+  "experience": [
+    {
+      "company": {
+        "en": "Delaram Jewelry Gallery",
+        "fa": "گالری طلا و جواهر دلارام"
+      },
+      "role": {
+        "en": "Backend Developer",
+        "fa": "توسعه‌دهنده نرم‌افزار سمت سرور"
+      },
+      "date": {
+        "en": "Dec 2025 — Present",
+        "fa": "آذر ۱۴۰۴ — اکنون"
+      },
+      "description": {
+        "en": "Develop and maintain NestJS and Express services, design APIs, and build user management and business workflows with frontend and product teams.",
+        "fa": "طراحی و نگهداری سرویس‌های سمت سرور مبتنی بر NestJS و Express، توسعه رابط‌های برنامه‌نویسی، پیاده‌سازی مدیریت کاربران و فرآیندهای کسب‌وکار، و همکاری با تیم‌های توسعه رابط کاربری و مدیریت محصول."
+      }
+    },
+    {
+      "company": {
+        "en": "Lahze Card",
+        "fa": "لحظه کارت"
+      },
+      "role": {
+        "en": "Backend Developer · Part time",
+        "fa": "توسعه‌دهنده نرم‌افزار سمت سرور · پاره‌وقت"
+      },
+      "date": {
+        "en": "Dec 2024 — Present",
+        "fa": "آذر ۱۴۰۳ — اکنون"
+      },
+      "description": {
+        "en": "Build enterprise REST APIs and server infrastructure. Optimize services with MongoDB and Redis and develop new product capabilities.",
+        "fa": "طراحی و توسعه زیرساخت سمت سرور و رابط‌های REST سازمانی، بهینه‌سازی عملکرد سرویس‌ها با MongoDB و Redis، و مشارکت در پیاده‌سازی قابلیت‌های جدید محصول."
+      }
+    },
+    {
+      "company": {
+        "en": "MRL Robotics",
+        "fa": "آزمایشگاه رباتیک MRL"
+      },
+      "role": {
+        "en": "Robotics Software Developer",
+        "fa": "توسعه‌دهنده نرم‌افزار رباتیک"
+      },
+      "date": {
+        "en": "Apr 2022 — Jun 2025",
+        "fa": "اردیبهشت ۱۴۰۱ — خرداد ۱۴۰۴"
+      },
+      "description": {
+        "en": "Develop software for humanoid soccer robots and research decision-making and control algorithms for robotics competitions.",
+        "fa": "توسعه نرم‌افزار ربات‌های انسان‌نمای فوتبالیست، پژوهش در زمینه الگوریتم‌های تصمیم‌گیری و کنترل، و مشارکت در پروژه‌های تحقیقاتی و مسابقات رباتیک."
+      }
+    },
+    {
+      "company": {
+        "en": "Freelance",
+        "fa": "همکاری پروژه‌ای مستقل"
+      },
+      "role": {
+        "en": "Backend Developer",
+        "fa": "توسعه‌دهنده نرم‌افزار سمت سرور"
+      },
+      "date": {
+        "en": "Jul 2022 — Jan 2024",
+        "fa": "تیر ۱۴۰۱ — دی ۱۴۰۲"
+      },
+      "description": {
+        "en": "Build Node.js and NestJS projects, design databases and APIs, implement authentication, and deploy and maintain services.",
+        "fa": "توسعه پروژه‌های مبتنی بر Node.js و NestJS، طراحی پایگاه داده و رابط‌های برنامه‌نویسی، پیاده‌سازی احراز هویت کاربران، و استقرار و نگهداری سرویس‌ها."
+      }
+    }
+  ],
+  "projects": [
+    {
+      "name": {
+        "en": "Delaram Jewelry Gallery",
+        "fa": "گالری طلا و جواهر دلارام"
+      },
+      "description": {
+        "en": "Backend services, APIs, user management, and business workflows for Delaram Jewelry Gallery.",
+        "fa": "طراحی و توسعه سرویس‌های سمت سرور، رابط‌های برنامه‌نویسی، مدیریت کاربران و فرآیندهای کسب‌وکار گالری دلارام."
+      },
+      "stack": "NestJS / Express.js",
+      "url": "https://delaram-gallery.com"
+    },
+    {
+      "name": {
+        "en": "Rhino Coffee",
+        "fa": "راینو کافی"
+      },
+      "description": {
+        "en": "Backend for a coffee business.",
+        "fa": "توسعه سرویس‌های سمت سرور برای کسب‌وکار قهوه."
+      },
+      "stack": "NestJS / PostgreSQL / Docker",
+      "url": "https://rhinocaffe.ir"
+    },
+    {
+      "name": {
+        "en": "Vamdan",
+        "fa": "وامدان"
+      },
+      "description": {
+        "en": "A commercial project featured in my résumé.",
+        "fa": "پروژه تجاری معرفی‌شده در سوابق حرفه‌ای."
+      },
+      "stack": "Backend development",
+      "url": "https://vamdan.com/"
+    },
+    {
+      "name": {
+        "en": "Task Management API",
+        "fa": "رابط برنامه‌نویسی مدیریت وظایف"
+      },
+      "description": {
+        "en": "Task management with authenticated access.",
+        "fa": "پیاده‌سازی مدیریت وظایف با قابلیت احراز هویت کاربران."
+      },
+      "stack": "NestJS / MySQL / JWT",
+      "url": ""
+    },
+    {
+      "name": {
+        "en": "Chatter Backend",
+        "fa": "زیرساخت پیام‌رسان چتر"
+      },
+      "description": {
+        "en": "Real-time messaging backend.",
+        "fa": "توسعه سرویس‌های پیام‌رسانی بلادرنگ."
+      },
+      "stack": "NestJS / WebSocket / MongoDB / GraphQL",
+      "url": ""
+    },
+    {
+      "name": {
+        "en": "E-commerce Backend",
+        "fa": "زیرساخت فروشگاه اینترنتی"
+      },
+      "description": {
+        "en": "An e-commerce backend built with TypeScript.",
+        "fa": "طراحی و توسعه سرویس‌های فروشگاهی با TypeScript."
+      },
+      "stack": "NestJS / TypeScript / PostgreSQL / Docker",
+      "url": ""
+    },
+    {
+      "name": {
+        "en": "Telegram Bot",
+        "fa": "ربات تلگرام"
+      },
+      "description": {
+        "en": "Bot development with the Telegram API.",
+        "fa": "توسعه ربات مبتنی بر رابط برنامه‌نویسی تلگرام."
+      },
+      "stack": "Node.js / Telegram Bot API",
+      "url": ""
+    }
+  ],
+  "education": {
+    "en": "BSc in Computer Software Engineering · Islamic Azad University, Qazvin · 2020–2025",
+    "fa": "کارشناسی مهندسی کامپیوتر، نرم‌افزار · دانشگاه آزاد اسلامی قزوین · ۱۳۹۹–۱۴۰۴"
+  },
+  "award": {
+    "en": "Iran Open 2023 · MRL-HSL humanoid robotics",
+    "fa": "ایران اپن ۲۰۲۳ · رباتیک انسان‌نمای MRL-HSL"
+  },
+  "photoUrl": "",
+  "educationEntries": [],
+  "awards": [],
+  "appearance": {
+    "theme": "amber",
+    "mode": "dark"
+  }
+};

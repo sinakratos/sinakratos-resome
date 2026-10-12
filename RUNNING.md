@@ -1,27 +1,19 @@
-# Sina portfolio
+# Current project status
 
-Features: résumé website, English/Persian and RTL layout, dark/light preferences, downloadable original résumé, server-backed bilingual administration at /admin.
+This project now runs independently on Next.js and Node.js. ChatGPT authentication, Sites publishing configuration, and Cloudflare storage have been removed from the active application.
 
-Admin authorization: Sign in with ChatGPT as sinakhoshzaban2@gmail.com, verified as the Site owner. Anonymous and other-account writes are denied server-side. Saved content is in D1; revision checks prevent overwriting concurrent edits.
+Start with `npm run setup` and `npm run dev` from this directory. Open the printed localhost URL; the admin panel is `/admin`. Your local password is the `ADMIN_PASSWORD` value in ignored `.env.local`.
 
-## Local development
+English/Persian, RTL, dark/light themes, the downloadable résumé, and editable content are retained. Content is saved in local SQLite at `data/resume.sqlite` and is ignored by Git.
 
-Run `npm run dev`; use the printed URL. The starter uses a local test identity; it cannot enter the owner-only editor. The production build can be run with `npm start` after `npm run build`.
+See README.md for production and later GitHub instructions. No online deployment or DNS changes are part of this local setup.
 
-For a fresh local D1 database, run `npm run db:generate` only after schema changes, build, and apply pending migration files as described in README.md. The initial migration is drizzle/0000_clean_star_brand.sql. Do not replay migrations already applied.
+Verification completed: production build and TypeScript checks passed. The running production server returned the public résumé and protected editor successfully. Password login, SQLite save/read-back, stale-revision rejection (409), anonymous/cross-origin rejection (403), and logout were tested successfully.
 
-## Verification performed
+The admin panel now supports adding projects, named skills with four proficiency levels, work experience, education entries, and awards. Amber, Ocean, and Emerald palettes each support light/dark mode, with site defaults editable in the Themes tab. Public Persian text has been revised to a formal professional register, and Delaram Gallery links to https://delaram-gallery.com.
 
-- TypeScript check passed: npx tsc --noEmit.
-- Worker build passed.
-- Public résumé response returned 200.
-- Local production API save and persistent read-back passed.
-- Stale revision returned 409.
-- Anonymous write returned 403.
-- Browser visual checks unavailable: no browser connected to this session.
+Verification: all added entry types and all six appearance combinations passed save/read-back checks; temporary test entries were removed afterward. The updated résumé and project link appeared in server-rendered public output. Browser interaction/visual checks were unavailable because no browser is connected.
 
-## Publishing status
+Profile photo upload is available in Admin → Profile. JPG, PNG, and WebP files up to 5 MB are accepted. The image is previewed before publishing; click Save changes to display it on the résumé, or Remove photo and save to restore initials. Images are stored in the same SQLite database as the résumé.
 
-Site registered in .openai/hosting.json and audience set to public as requested. Source upload is blocked by timeouts / empty replies from the hosting repository endpoint. No successful publication or live URL is confirmed. The hosting service requires publication before it accepts sinakratos.ir and returns DNS records. Resume the Sites source workflow with refreshed short-lived credentials; never store credentials in source.
-
-The original résumé PDF is publicly downloadable when published, including the details in the supplied original document.
+Photo verification passed: authenticated upload, public image retrieval, saved avatar rendering, 512×512 WebP conversion without EXIF metadata, rejected invalid/oversized images, rejected anonymous/cross-origin uploads, missing-photo validation, and cache ETag handling. The temporary fixture was removed and the original profile was restored after testing. The production build and TypeScript checks passed.
