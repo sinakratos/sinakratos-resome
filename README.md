@@ -58,3 +58,17 @@ Choose the website default palette (Amber, Ocean, or Emerald) and light/dark mod
 Open **Admin → Profile**, choose a JPG, PNG, or WebP photo (up to 5 MB), and click **Save changes**. The admin preview shows the selected photo; saving displays it on the public résumé. **Remove photo** restores the initials after you save.
 
 Uploads are cropped to a square, resized to at most 512×512, and converted to WebP without embedded metadata. They are stored inside the SQLite database, so the existing database backup includes the photos. Replacing or removing a profile photo detaches it from the résumé; previously uploaded files remain in the database.
+
+## PM2 on a server
+
+`ecosystem.config.cjs` starts this app on `127.0.0.1:3001` and explicitly uses this project directory, regardless of the directory you launch PM2 from. Keep Nginx pointed at the same port. Run from the folder containing package.json:
+
+```sh
+npm ci --include=dev
+npm run setup
+npm run build
+pm2 start ecosystem.config.cjs --only sinakratos-resume
+pm2 save
+```
+
+If an existing PM2 entry named `sinakratos-resume` has the wrong working directory (for example, npm reports `/root/package.json`), remove that entry with `pm2 delete sinakratos-resume`, then start the configuration above. This removes the PM2 process entry, not project files. Preserve your other application's process. Use `pm2 describe sinakratos-resume` to check the working directory and `pm2 logs sinakratos-resume --lines 30` to inspect startup.
