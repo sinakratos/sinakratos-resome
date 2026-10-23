@@ -1,9 +1,11 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Project instructions
 
-# This is NOT the Next.js you know
+This is a native Node.js résumé website. There is no frontend build step.
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
+- Use Node.js 24 (minimum 22.13), native HTTP, SQLite, and browser APIs.
+- Keep external dependencies minimal. Sharp handles safe photo decoding and resizing.
+- Preserve the existing SQLite tables and JSON content format when making changes.
+- Never print or package `.env.local` or `data/`.
+- Escape all user content in HTML, and retain authentication and origin checks for writes.
+- Run `npm test` after server or editor behavior changes.
+- Hosting runs `npm start`; `npm run package:host` produces a source archive without dependencies or secrets.

@@ -1,24 +1,4 @@
-import { z } from 'zod';
-const pair = z.object({ en: z.string().max(5000), fa: z.string().max(5000) });
-const namedPair = pair.refine(value => !!value.en.trim() && !!value.fa.trim(), 'Please enter a name in both languages. / لطفاً نام را به هر دو زبان وارد کنید.');
-export const appearanceSchema = z.object({ theme: z.enum(['amber', 'ocean', 'emerald']), mode: z.enum(['light', 'dark']) });
-export const resumeSchema = z.object({
-  name: namedPair, title: pair, headline: pair, about: pair, location: pair,
-  email: z.string().email(), phone: z.string().max(30),
-  skills: z.array(z.object({ name: z.string().trim().min(1).max(80), level: z.enum(['Beginner', 'Intermediate', 'Advanced', 'Expert']) })).max(30),
-  experience: z.array(z.object({ company: namedPair, role: pair, date: pair, description: pair })).max(20),
-  projects: z.array(z.object({ name: namedPair, description: pair, stack: z.string().max(300), url: z.string().max(500).refine(value => {
-    if (!value) return true;
-    try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password; } catch { return false; }
-  }, 'Enter a valid HTTPS link. / لطفاً پیوند معتبر HTTPS وارد کنید.') })).max(30),
-  photoUrl: z.string().regex(/^$|^\/api\/photos\/[a-f0-9]{64}$/, 'Choose a profile photo using the upload control.').default(''),
-  education: pair, award: pair,
-  educationEntries: z.array(pair).max(20).default([]),
-  awards: z.array(pair).max(20).default([]),
-  appearance: appearanceSchema.default({ theme: 'amber', mode: 'dark' }),
-});
-export type Resume = z.infer<typeof resumeSchema>;
-export const initialResume: Resume = {
+{
   "name": {
     "en": "Sina Khoshzaban",
     "fa": "سینا خوشزبان خسروشاهی"
@@ -274,4 +254,4 @@ export const initialResume: Resume = {
     "theme": "amber",
     "mode": "dark"
   }
-};
+}

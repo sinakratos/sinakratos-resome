@@ -1,8 +1,7 @@
-import 'server-only';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
-import { initialResume, resumeSchema, type Resume } from './resume';
+import { initialResume, validateResume } from './resume.mjs';
 
 export function database() {
   const filename = path.resolve(process.env.DATABASE_PATH || 'data/resume.sqlite');
@@ -21,17 +20,17 @@ export function database() {
   return db;
 }
 
-export async function readResume() {
+export function readResume() {
   const db = database();
   try {
     const row = db.prepare('SELECT content, revision FROM resume_content WHERE id = 1').get();
     return row
-      ? { resume: resumeSchema.parse(JSON.parse(String(row.content))), revision: Number(row.revision) }
+      ? { resume: validateResume(JSON.parse(String(row.content))), revision: Number(row.revision) }
       : { resume: initialResume, revision: 0 };
   } finally { db.close(); }
 }
 
-export function saveResume(resume: Resume, revision: number) {
+export function saveResume(resume, revision) {
   const db = database();
   try {
     const result = revision === 0
@@ -41,12 +40,12 @@ export function saveResume(resume: Resume, revision: number) {
   } finally { db.close(); }
 }
 
-export function storePhoto(id: string, content: Uint8Array) {
+export function storePhoto(id, content) {
   const db = database();
   try { db.prepare('INSERT OR IGNORE INTO profile_photos (id, content) VALUES (?, ?)').run(id, content); }
   finally { db.close(); }
 }
-export function readPhoto(id: string): Uint8Array | null {
+export function readPhoto(id) {
   const db = database();
   try {
     const row = db.prepare('SELECT content FROM profile_photos WHERE id = ?').get(id);
