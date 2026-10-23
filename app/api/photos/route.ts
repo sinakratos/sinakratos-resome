@@ -3,6 +3,9 @@ import { createHash } from 'node:crypto';
 import { isAdmin, sameOrigin } from '@/lib/admin-auth';
 import { storePhoto } from '@/lib/resume-store';
 export const runtime = 'nodejs';
+// Limit native image-processing concurrency/cache on small hosting plans.
+sharp.concurrency(1);
+sharp.cache(false);
 const MAX_FILE = 5 * 1024 * 1024;
 const MAX_BODY = MAX_FILE + 16 * 1024;
 export async function POST(request: Request) {

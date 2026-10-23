@@ -23,7 +23,7 @@ npm run build
 npm start
 ```
 
-By default, the server listens on loopback. On a server behind an HTTPS reverse proxy, run `npm start -- --hostname 0.0.0.0`. Forward the original Host and protocol correctly. Use a writable persistent `DATABASE_PATH` and configure `ADMIN_PASSWORD` and `SESSION_SECRET` privately.
+Production `npm start` binds to 0.0.0.0 and accepts the PORT environment variable (default 3000). The development server remains on loopback; the optional PM2 configuration binds to loopback for a VPS reverse proxy. Forward the original Host and protocol correctly. Use a writable persistent `DATABASE_PATH` and configure `ADMIN_PASSWORD` and `SESSION_SECRET` privately.
 
 ## Content and administration
 
@@ -72,3 +72,7 @@ pm2 save
 ```
 
 If an existing PM2 entry named `sinakratos-resume` has the wrong working directory (for example, npm reports `/root/package.json`), remove that entry with `pm2 delete sinakratos-resume`, then start the configuration above. This removes the PM2 process entry, not project files. Preserve your other application's process. Use `pm2 describe sinakratos-resume` to check the working directory and `pm2 logs sinakratos-resume --lines 30` to inspect startup.
+
+## Small managed hosts
+
+See [Chabokan deployment](deploy/chabokan/README.md) for the prebuilt upload archive, environment settings, and persistent storage. Run `npm run package:host` to create it locally. Only the five UI primitives used by the application are retained.
