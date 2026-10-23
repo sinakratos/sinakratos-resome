@@ -14,14 +14,13 @@ curl -I http://127.0.0.1:3001
 If the app is not running, from the directory containing package.json and ecosystem.config.cjs:
 
 ```sh
-npm ci --include=dev
+npm ci --omit=dev
 npm run setup
-npm run build
 pm2 start ecosystem.config.cjs --only sinakratos-resume
 pm2 save
 ```
 
-The server must use Node.js >=22.13. The app needs its own .env.local credentials and a writable DATABASE_PATH. Preserve the SQLite database through deployments: it contains saved content and photos. To restore PM2 at boot, run pm2 startup and execute the command it prints for your deployment user, then run pm2 save.
+The server must use Node.js >=22.13. Set PUBLIC_ORIGIN=https://sinakratos.ir in .env.local for HTTPS cookies. The app needs its own .env.local credentials and a writable DATABASE_PATH. Preserve the SQLite database through deployments: it contains saved content and photos. To restore PM2 at boot, run pm2 startup and execute the command it prints for your deployment user, then run pm2 save.
 
 ## 2. DNS and network
 

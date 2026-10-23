@@ -1,29 +1,18 @@
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { cpSync, mkdirSync, rmSync } from 'node:fs';
+import { resolve, join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-
-const target = resolve('dist/chabokan');
-if (!existsSync('.next/standalone/server.js')) throw new Error('Run npm run build first.');
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const target = join(root, 'dist/chabokan');
 rmSync(target, { recursive: true, force: true });
 mkdirSync(target, { recursive: true });
-cpSync('.next/standalone', target, { recursive: true, dereference: true });
-cpSync('public', join(target, 'public'), { recursive: true });
-cpSync('.next/static', join(target, '.next/static'), { recursive: true });
-// Next tracing can copy environment files. Never ship authoring credentials or data.
-function clean(folder) {
-  for (const entry of readdirSync(folder, { withFileTypes: true })) {
-    const filename = join(folder, entry.name);
-    if (entry.name.startsWith('.env') || ['data', '.git', '.wrangler', '.sites-runtime'].includes(entry.name)) {
-      rmSync(filename, { recursive: true, force: true });
-    } else if (entry.isDirectory() && entry.name !== 'node_modules') clean(filename);
-  }
+// Allowlist excludes credentials, SQLite data, and old generated bundles.
+// The host installs its own native Sharp build, suitable for its architecture.
+for (const entry of ['server.mjs', 'server', 'public', 'scripts', 'test', 'deploy', 'ecosystem.config.cjs', '.npmrc', 'package.json', 'package-lock.json', '.env.example']) {
+  const dest = join(target, entry); mkdirSync(dirname(dest), { recursive: true });
+  cpSync(join(root, entry), dest, { recursive: true });
 }
-clean(target);
-// Keep the generated server's package type; its traced node_modules are bundled.
-const original = JSON.parse(readFileSync(join(target, 'package.json'), 'utf8'));
-writeFileSync(join(target, 'package.json'), JSON.stringify({ name: 'sinakratos-resume-host', private: true, version: '1.0.0', type: original.type || 'commonjs', engines: { node: '>=22.13.0' }, scripts: { start: 'node start.cjs', build: 'node -e "console.log(\'Already built\')"' } }, null, 2) + '\n');
-writeFileSync(join(target, 'start.cjs'), `process.env.HOSTNAME = process.env.APP_HOST || '0.0.0.0';\nprocess.env.PORT = process.env.PORT || '3000';\nrequire('./server.js');\n`);
-cpSync('.env.example', join(target, '.env.example'));
-const archive = resolve('dist/sinakratos-chabokan.tar.gz');
+cpSync(join(root, 'deploy/chabokan/README.md'), join(target, 'README.md'));
+const archive = join(root, 'dist/sinakratos-chabokan.tar.gz');
 execFileSync('tar', ['-czf', archive, '-C', target, '.']);
-console.log(`Prepared host folder: ${target}\nUpload archive: ${archive}\nSet ADMIN_PASSWORD, SESSION_SECRET and DATABASE_PATH in the hosting panel. No local credentials or database included.`);
+console.log(`Upload ${archive}\nExtract into /app, install with npm ci --omit=dev, then start with npm start.\nSet admin credentials in the hosting panel. Keep /app/data persistent.`);
